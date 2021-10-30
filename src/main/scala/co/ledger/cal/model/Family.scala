@@ -2,20 +2,21 @@ package co.ledger.cal.model
 
 import doobie.postgres.implicits.pgEnumStringOpt
 import doobie.util.meta.Meta
-import enumeratum.{CirceEnum, Enum, EnumEntry}
+import enumeratum.CirceEnum
+import enumeratum.Enum
+import enumeratum.EnumEntry
 import enumeratum.EnumEntry.Lowercase
 import sttp.tapir
 import sttp.tapir.CodecFormat.TextPlain
-
 
 sealed trait Family extends EnumEntry with Lowercase
 
 object Family extends Enum[Family] with CirceEnum[Family] {
   val values: IndexedSeq[Family] = findValues
 
-  case object Bitcoin extends Family
+  case object Bitcoin  extends Family
   case object Ethereum extends Family
-  case object Ripple extends Family
+  case object Ripple   extends Family
 
   implicit val meta: Meta[Family] =
     pgEnumStringOpt("family", withNameOption, _.entryName)
@@ -25,4 +26,3 @@ object Family extends Enum[Family] with CirceEnum[Family] {
   implicit val schema: tapir.Schema[Family] = tapirCodec.schema
 
 }
-

@@ -2,8 +2,10 @@ package co.ledger.cal.model
 
 import doobie.Get
 import doobie.util.Put
-import io.circe.{Decoder, Encoder}
-import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
+import io.circe.Decoder
+import io.circe.Encoder
+import io.circe.generic.semiauto.deriveDecoder
+import io.circe.generic.semiauto.deriveEncoder
 import sttp.tapir.Schema
 
 case class Network(`type`: Type, blockchain_name: String)
@@ -13,7 +15,5 @@ object Network {
   implicit def encoder: Encoder[Network] = deriveEncoder[Network]
   implicit val get: Get[Network]         = getFromDecoder
   implicit val put: Put[Network]         = putFromEncoder
-  implicit val schema: Schema[Network] = Schema.derived
+  implicit val schema: Schema[Network]   = Schema.derived
 }
-
-

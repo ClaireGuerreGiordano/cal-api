@@ -1,10 +1,17 @@
 package co.ledger.cal
 
-import cats.effect.{Blocker, ExitCode, IO, IOApp, Resource, SyncIO}
-import cats.implicits.{catsSyntaxFlatMapOps, toSemigroupKOps}
+import cats.effect.Blocker
+import cats.effect.ExitCode
+import cats.effect.IO
+import cats.effect.IOApp
+import cats.effect.Resource
+import cats.effect.SyncIO
+import cats.implicits.catsSyntaxFlatMapOps
+import cats.implicits.toSemigroupKOps
 import co.ledger.cal.api.CALRoutes
 import co.ledger.cal.config.CALConfig
-import co.ledger.cal.repository.{FlywayDatabaseMigrator, PostgresCoinRepository}
+import co.ledger.cal.repository.FlywayDatabaseMigrator
+import co.ledger.cal.repository.PostgresCoinRepository
 import co.ledger.cal.service.CoinService
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.StrictLogging
@@ -18,27 +25,29 @@ import sttp.tapir.docs.openapi._
 import sttp.tapir.openapi.circe.yaml._
 import sttp.tapir.swagger.http4s.SwaggerHttp4s
 
-import java.util.concurrent.{ExecutorService, Executors}
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 import scala.concurrent.ExecutionContext
 
 object CALServer extends IOApp.WithContext with StrictLogging {
   val blockingPool: ExecutorService = Executors.newFixedThreadPool(2)
-  override protected def executionContextResource: Resource[SyncIO, ExecutionContext] = Resource.eval(SyncIO(ExecutionContext.global))
+  override protected def executionContextResource: Resource[SyncIO, ExecutionContext] =
+    Resource.eval(SyncIO(ExecutionContext.global))
 
   override def run(args: List[String]): IO[ExitCode] = {
-    val blocker  = Blocker.liftExecutorService(blockingPool)
+    val blocker = Blocker.liftExecutorService(blockingPool)
     val serverResource = for {
       config <- IO(ConfigFactory.load(getClass.getClassLoader))
       config <- IO(ConfigSource.fromConfig(config).loadOrThrow[CALConfig])
-      _ <- FlywayDatabaseMigrator.migrate(config.database)
+      _      <- FlywayDatabaseMigrator.migrate(config.database)
       transactor = Transactor.fromDriverManager[IO](
         config.database.driver,
         config.database.url,
         config.database.user,
         config.database.pass
       )
-      repo = new PostgresCoinRepository(transactor)
-      service = CoinService(repo)
+      repo      = new PostgresCoinRepository(transactor)
+      service   = CoinService(repo)
       calRoutes = new CALRoutes(service)
       docs = OpenAPIDocsInterpreter().toOpenAPI(
         CALRoutes.endpoints,
@@ -59,11 +68,11 @@ object CALServer extends IOApp.WithContext with StrictLogging {
     } yield serverBuilder
 
     serverResource.flatMap(res =>
-        res.use(server =>
-          IO.delay(logger.info("Server started at {}", server.address)) >> IO.never.as(
-            ExitCode.Success
-          )
+      res.use(server =>
+        IO.delay(logger.info("Server started at {}", server.address)) >> IO.never.as(
+          ExitCode.Success
         )
       )
+    )
   }
 }

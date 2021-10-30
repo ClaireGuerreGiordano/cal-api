@@ -1,0 +1,61 @@
+name: test
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  checks:
+    name: ${{ matrix.task }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        task: [scalafmtCheckAll]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/coursier/v1
+            ~/.ivy2/cache
+            ~/.sbt
+          key: cal-api-${{ hashFiles('build.sbt', 'Dependencies.scala', 'plugins.sbt') }}
+          restore-keys: |
+            cal-api-${{ hashFiles('build.sbt', 'Dependencies.scala', 'plugins.sbt') }}
+      - run: sbt "${{ matrix.task }}"
+  it-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: cal
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/coursier/v1
+            ~/.ivy2/cache
+            ~/.sbt
+          key: cal-api-${{ hashFiles('build.sbt', 'Dependencies.scala', 'plugins.sbt') }}
+          restore-keys: |
+            cal-api-cache-${{ hashFiles('build.sbt', 'Dependencies.scala', 'plugins.sbt') }}
+      - run: sbt it:test
+        env:
+          CAL_POSTGRES_PASSWORD: postgres
+          CAL_POSTGRES_URL: jdbc:postgresql://localhost:5432/cal
+          CAL_POSTGRES_USER: postgres
+          CAL_POSTGRES_DRIVER: org.postgresql.Driver

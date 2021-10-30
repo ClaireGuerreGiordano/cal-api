@@ -16,5 +16,4 @@ object Utils {
     c ++ c.flatMap(f => lookup(f))
   }
 
-
 }

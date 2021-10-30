@@ -9,4 +9,3 @@ trait Repository[V, T] {
   def getAll: Stream[IO, T]
   def getOne(id: V): IO[T]
 }
-
