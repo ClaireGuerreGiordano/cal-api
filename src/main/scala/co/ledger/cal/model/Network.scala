@@ -1,7 +1,19 @@
 package co.ledger.cal.model
 
-import io.circe.generic.JsonCodec
+import doobie.Get
+import doobie.util.Put
+import io.circe.{Decoder, Encoder}
+import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
+import sttp.tapir.Schema
 
-@JsonCodec case class Network(`type`: Type, blockchain_name: String)
+case class Network(`type`: Type, blockchain_name: String)
+
+object Network {
+  implicit def decoder: Decoder[Network] = deriveDecoder[Network]
+  implicit def encoder: Encoder[Network] = deriveEncoder[Network]
+  implicit val get: Get[Network]         = getFromDecoder
+  implicit val put: Put[Network]         = putFromEncoder
+  implicit val schema: Schema[Network] = Schema.derived
+}
 
 

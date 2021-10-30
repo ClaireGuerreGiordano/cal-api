@@ -57,6 +57,8 @@ lazy val cal =
         library.enumeratum,
         library.circuit,
         library.scalaLogging,
+        library.betterFiles,
+        library.sttpClient,
         library.munit             % IntegrationTest,
         library.munitCatsEffect   % IntegrationTest,
         library.munitScalaCheck   % IntegrationTest,
@@ -105,6 +107,8 @@ lazy val library =
       val circuit         = "0.4.4"
       val scalaLogging    = "3.9.4"
       val scodecBits      = "1.1.29"
+      val betterFiles     = "3.9.1"
+      val sttpClient      = "3.3.16"
     }
     val awskms            = "software.amazon.awssdk" % "kms"                 % Version.awssdk
     val catsCore          = "org.typelevel"         %% "cats-core"           % Version.cats
@@ -150,4 +154,6 @@ lazy val library =
     val tapirSwaggerUi = "com.softwaremill.sttp.tapir" %% "tapir-swagger-ui-http4s" % Version.tapir
     val circuit      = "io.chrisdavenport"          %% "circuit"       % Version.circuit
     val scalaLogging = "com.typesafe.scala-logging" %% "scala-logging" % Version.scalaLogging
+    val betterFiles = "com.github.pathikrit" %% "better-files" % Version.betterFiles
+    val sttpClient = "com.softwaremill.sttp.client3" %% "core" % Version.sttpClient
   }

@@ -4,6 +4,10 @@ import doobie.postgres.implicits.pgEnumStringOpt
 import doobie.util.meta.Meta
 import enumeratum.EnumEntry.Lowercase
 import enumeratum.{CirceEnum, Enum, EnumEntry}
+import sttp.tapir
+import sttp.tapir.CodecFormat.TextPlain
+
+sealed trait Type extends EnumEntry with Lowercase
 
 object Type extends Enum[Type] with CirceEnum[Type] {
   val values: IndexedSeq[Type] = findValues
@@ -12,8 +16,10 @@ object Type extends Enum[Type] with CirceEnum[Type] {
 
   case object Test extends Type
 
-  implicit val chainMeta: Meta[Type] =
-    pgEnumStringOpt("type", withNameOption, _.entryName)
-}
+  implicit val meta: Meta[Type] =
+    pgEnumStringOpt("network_type", withNameOption, _.entryName)
 
-sealed trait Type extends EnumEntry with Lowercase
+  implicit val tapirCodec: tapir.Codec[String, Type, TextPlain] =
+    tapir.Codec.string.mapDecode(tapirCodec.decode)(_.entryName)
+  implicit val schema: tapir.Schema[Type] = tapirCodec.schema
+}

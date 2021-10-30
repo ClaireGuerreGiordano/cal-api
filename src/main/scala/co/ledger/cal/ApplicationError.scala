@@ -11,3 +11,7 @@ final case class JsonParsingFailure(errors: NonEmptyList[String]) extends Applic
 final case class JsonFileNotFound(subFolderName: String) extends ApplicationError {
   override def getMessage: String = s"json file missing under directory $subFolderName"
 }
+
+final case class InputZipFileNotFound() extends ApplicationError {
+  override def getMessage: String = s"zip file missing"
+}

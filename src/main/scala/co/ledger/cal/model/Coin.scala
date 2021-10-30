@@ -3,7 +3,10 @@ package co.ledger.cal.model
 import cats.data._
 import cats.implicits._
 import co.ledger.cal.model.Type.Main
+import io.circe.Codec
 import io.circe.generic.JsonCodec
+import io.circe.generic.semiauto.deriveCodec
+import sttp.tapir.Schema
 
 
 @JsonCodec case class NonValidatedCoin(ticker: String, name: String, symbol: String, family: Family, coin_type: Int,
@@ -13,6 +16,13 @@ import io.circe.generic.JsonCodec
 final case class Coin(ticker: String, name: String, symbol: String, family: Family, coinType: Int,
                  hasSegwit: Boolean, hasToken: Boolean, units: NonEmptyList[Unit],
                  networks: NonEmptyList[Network])
+
+object Coin {
+  implicit val codec: Codec[Coin]  = deriveCodec
+  implicit val schema: Schema[Coin] = Schema.derived
+  val example: Coin = Coin("ticker", "name", "symbol", Family.Bitcoin, 0, true, false,
+    NonEmptyList.one(Unit("name", "code", 0L)), NonEmptyList.one(Network(Type.Main, "blockchain_name")))
+}
 
 trait CoinValidator {
 
