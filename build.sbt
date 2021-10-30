@@ -13,7 +13,7 @@ lazy val cal =
       scalaVersion := "2.13.6",
       scalacOptions += "-Ymacro-annotations",
       buildInfoKeys    := Seq[BuildInfoKey](name, version),
-      buildInfoPackage := "co.ledger.nft",
+      buildInfoPackage := "co.ledger.cal",
       Defaults.itSettings,
       Test / fork                         := true,
       IntegrationTest / fork              := true,

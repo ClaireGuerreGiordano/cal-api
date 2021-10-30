@@ -27,13 +27,12 @@ final class CALRoutes(coinService: CoinService)(implicit cs: ContextShift[IO], t
         val tmp = better.files.File.temporaryFile()
         tmp
           .map(f => f.appendByteArray(is.readAllBytes()))
-          .map(b => {
-            logger.info(s"into api layer ${b.name}")
+          .map(b =>
             coinService
               .bulkInsert(b)
               .attempt
               .map(_.leftMap(_ => StatusCode.ServiceUnavailable))
-          })
+          )
       }.get()
 
     }

@@ -1,0 +1,37 @@
+{
+    "ticker": "BTC",
+    "name": "Bitcoin",
+    "symbol": "Ƀ",
+    "family": "bitcoin",
+    "coin_type": 0,
+    "has_segwit": false,
+    "has_tokens": false,
+    "units": [
+        {
+            "name": "satoshi",
+            "code": "sat",
+            "magnitude": 0
+        },
+        {
+            "name": "bit",
+            "code": "bit",
+            "magnitude": 2
+        },
+        {
+            "name": "mBTC",
+            "code": "mBTC",
+            "magnitude": 5
+        },
+        {
+            "name": "bitcoin",
+            "code": "BTC",
+            "magnitude": 8
+        }
+    ],
+    "networks": [
+        {
+            "type": "main",
+            "blockchain_name": "foundation"
+        }
+    ]
+}
