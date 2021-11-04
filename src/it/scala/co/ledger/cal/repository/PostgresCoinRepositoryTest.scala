@@ -1,6 +1,6 @@
 package co.ledger.cal.repository
 
-import co.ledger.cal.model.Coin
+import co.ledger.cal.model.coin.Coin
 
 class PostgresCoinRepositoryTest extends Fixture {
 

@@ -6,11 +6,7 @@ CREATE TABLE coin (
     name VARCHAR NOT NULL,
     symbol VARCHAR NOT NULL,
     family family NOT NULL,
-    coin_type integer NOT NULL,
-    has_segwit boolean NOT NULL,
-    has_token boolean NOT NULL,
-    units json NOT NULL,
-    networks json NOT NULL,
+    attributes json NOT NULL,
 
     PRIMARY KEY (ticker, name)
 );

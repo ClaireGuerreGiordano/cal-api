@@ -1,5 +1,7 @@
-package co.ledger.cal.model
+package co.ledger.cal.model.coin
 
+import co.ledger.cal.model.getFromDecoder
+import co.ledger.cal.model.putFromEncoder
 import doobie.Get
 import doobie.util.Put
 import io.circe.Decoder

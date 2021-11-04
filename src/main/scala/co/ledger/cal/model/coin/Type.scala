@@ -1,11 +1,11 @@
-package co.ledger.cal.model
+package co.ledger.cal.model.coin
 
 import doobie.postgres.implicits.pgEnumStringOpt
 import doobie.util.meta.Meta
-import enumeratum.EnumEntry.Lowercase
 import enumeratum.CirceEnum
 import enumeratum.Enum
 import enumeratum.EnumEntry
+import enumeratum.EnumEntry.Lowercase
 import sttp.tapir
 import sttp.tapir.CodecFormat.TextPlain
 

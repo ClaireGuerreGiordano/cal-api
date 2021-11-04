@@ -2,7 +2,7 @@ package co.ledger.cal.repository
 
 import cats.data.NonEmptyList
 import cats.effect.IO
-import co.ledger.cal.model.Coin
+import co.ledger.cal.model.coin.Coin
 import co.ledger.cal.repository.PostgresCoinRepository.insertCoinsQuery
 import co.ledger.cal.repository.PostgresCoinRepository.selectAllCoinsQuery
 import co.ledger.cal.repository.PostgresCoinRepository.selectCoinQuery
@@ -26,12 +26,10 @@ class PostgresCoinRepository(transactor: Transactor[IO]) extends Repository[Coin
 
 object PostgresCoinRepository {
   def insertCoinsQuery(): Update[Coin] = Update[Coin](
-    s"""INSERT INTO COIN(ticker, name, symbol, family, coin_type, has_segwit, has_token, units, networks)
-       |VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (ticker, name)
+    s"""INSERT INTO COIN(ticker, name, symbol, family, attributes)
+       |VALUES (?, ?, ?, ?, ?) ON CONFLICT (ticker, name)
        |DO UPDATE SET symbol = EXCLUDED.symbol, family = EXCLUDED.family,
-       |coin_type = EXCLUDED.coin_type, has_segwit = EXCLUDED.has_segwit,
-       |has_token = EXCLUDED.has_token, units = EXCLUDED.units,
-       |networks = EXCLUDED.networks""".stripMargin
+       |attributes = EXCLUDED.attributes""".stripMargin
   )
 
   def selectAllCoinsQuery: Query0[Coin] = sql"""select * from coin""".query[Coin]

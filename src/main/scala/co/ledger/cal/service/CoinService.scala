@@ -4,16 +4,15 @@ import better.files.File
 import cats.data.NonEmptyList
 import cats.effect.IO
 import cats.implicits.toFlatMapOps
-import co.ledger.cal.model.Coin
+import co.ledger.cal.model.coin.Coin
 import co.ledger.cal.parser.CoinJsonParser
 import co.ledger.cal.repository.CoinId
 import co.ledger.cal.repository.Repository
-import com.typesafe.scalalogging.StrictLogging
 import fs2.Stream
 
-case class CoinService(repository: Repository[CoinId, Coin]) extends StrictLogging {
+case class CoinService(repository: Repository[CoinId, Coin]) extends Service[CoinId, Coin] {
 
-  def bulkInsert(file: File): IO[List[Coin]] = {
+  override def bulkInsert(file: File): IO[List[Coin]] = {
     val coins: IO[List[Coin]] = CoinJsonParser.parseDirectoryContent(file)
     coins.flatTap(l =>
       NonEmptyList.fromList(l) match {
@@ -23,8 +22,8 @@ case class CoinService(repository: Repository[CoinId, Coin]) extends StrictLoggi
     )
   }
 
-  def getOne(ticker: String, name: String): IO[Coin] = repository.getOne(CoinId(ticker, name))
+  override def getOne(id: CoinId): IO[Coin] = repository.getOne(id)
 
-  def getAll: Stream[IO, Coin] = repository.getAll
+  override def getAll: Stream[IO, Coin] = repository.getAll
 
 }

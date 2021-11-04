@@ -1,6 +1,6 @@
 package co.ledger.cal.parser
 
-import co.ledger.cal.model.Coin
+import co.ledger.cal.model.coin.Coin
 import co.ledger.cal.repository.Fixture
 
 import scala.reflect.io.{File, Path}

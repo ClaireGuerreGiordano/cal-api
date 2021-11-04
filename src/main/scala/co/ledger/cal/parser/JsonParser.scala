@@ -7,14 +7,17 @@ import cats.implicits.toBifunctorOps
 import cats.implicits.toTraverseOps
 import co.ledger.cal.JsonParsingFailure
 import co.ledger.cal.Utils
-import co.ledger.cal.model.Coin
-import co.ledger.cal.model.CoinValidator
-import co.ledger.cal.model.NonValidatedCoin
+import co.ledger.cal.model.coin.Coin
+import co.ledger.cal.model.coin.CoinValidator
+import co.ledger.cal.model.coin.NonValidatedCoin
+import co.ledger.cal.model.token.NonValidatedToken
+import co.ledger.cal.model.token.Token
+import co.ledger.cal.model.token.TokenValidator
 import io.circe.parser
 
 import scala.util.Properties
 
-abstract class JsonParser[T] {
+sealed abstract class JsonParser[T] {
 
   def parseJson(input: String): Either[JsonParsingFailure, T]
 
@@ -38,6 +41,20 @@ object CoinJsonParser extends JsonParser[Coin] {
       .flatMap(_.as[NonValidatedCoin])
       .leftMap(e => NonEmptyList.one(e.getMessage))
       .flatMap(Validator.validateCoin(_).toEither)
+      .leftMap(JsonParsingFailure(_))
+
+}
+
+object TokenJsonParser extends JsonParser[Token] {
+
+  object Validator extends TokenValidator
+
+  override def parseJson(input: String): Either[JsonParsingFailure, Token] =
+    parser
+      .parse(input)
+      .flatMap(_.as[NonValidatedToken])
+      .leftMap(e => NonEmptyList.one(e.getMessage))
+      .flatMap(Validator.validateToken(_).toEither)
       .leftMap(JsonParsingFailure(_))
 
 }
