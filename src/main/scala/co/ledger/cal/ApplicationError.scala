@@ -15,3 +15,7 @@ final case class JsonFileNotFound(subFolderName: String) extends ApplicationErro
 final case class InputZipFileNotFound() extends ApplicationError {
   override def getMessage: String = s"zip file missing"
 }
+
+final case class InvalidContractAddress(ca: String, error: String) extends ApplicationError {
+  override def getMessage: String = s"Invalid contract address $ca: $error"
+}

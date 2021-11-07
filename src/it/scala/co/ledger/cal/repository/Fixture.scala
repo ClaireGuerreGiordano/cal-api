@@ -23,6 +23,10 @@ trait Fixture extends AnyFlatSpec with BeforeAndAfterEach with BeforeAndAfterAll
 
   val zippedCoinsFolder: File = Paths.get("src/it/resources/coins.zip")
 
+  val zippedTokensFolder: File = Paths.get("src/it/resources/tokens.zip")
+
+  val zippedDappsFolder: File = Paths.get("src/it/resources/dapps.zip")
+
   implicit protected def timer: Timer[IO] = IO.timer(global)
 
   implicit val cs: ContextShift[IO] = IO.contextShift(global)
@@ -49,6 +53,10 @@ trait Fixture extends AnyFlatSpec with BeforeAndAfterEach with BeforeAndAfterAll
     .load
 
   val coinRepository: PostgresCoinRepository = new PostgresCoinRepository(transactor)
+
+  val tokenRepository: PostgresTokenRepository = new PostgresTokenRepository(transactor)
+
+  val dappRepository: PostgresDappRepository = new PostgresDappRepository(transactor)
 
   val blockingPool: ExecutorService       = Executors.newFixedThreadPool(2)
   val ec: ExecutionContextExecutorService = ExecutionContext.fromExecutorService(blockingPool)

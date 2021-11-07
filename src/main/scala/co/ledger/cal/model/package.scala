@@ -5,6 +5,7 @@ import cats.data.NonEmptyList
 import cats.implicits.toBifunctorOps
 import cats.implicits.toShow
 import cats.implicits.toTraverseOps
+import co.ledger.cal.Types.HexStr
 import doobie.Get
 import doobie.util.Put
 import io.circe.syntax.EncoderOps
@@ -18,6 +19,9 @@ import sttp.tapir.Schema
 import scala.reflect.ClassTag
 
 package object model {
+  implicit val hsSchema: Schema[HexStr] =
+    Schema.schemaForString.map(HexStr.from(_).toOption)(_.value)
+
   def getFromDecoder[T: Decoder]: Get[T] = Get[Json].temap { s =>
     Decoder[T].decodeJson(s).leftMap(_.getMessage())
   }
@@ -42,6 +46,21 @@ package object model {
   implicit def nelPut[T](implicit encoder: Encoder[T]): Put[NonEmptyList[T]] = Put[Json].contramap {
     l =>
       Json.fromValues(l.toList.map(encoder(_)))
+  }
+
+  implicit def listGet[T](implicit decoder: Decoder[T]): Get[List[T]] = Get[Json].temap(s =>
+    s.asArray match {
+      case Some(value) =>
+        value.map(json => decoder.decodeJson(json)).sequence match {
+          case Left(value)  => Left(value.getMessage())
+          case Right(value) => Right(value.toList)
+        }
+      case None => Left("invalid list")
+    }
+  )
+
+  implicit def listPut[T](implicit encoder: Encoder[T]): Put[List[T]] = Put[Json].contramap { l =>
+    Json.fromValues(l.map(encoder(_)))
   }
 
   implicit val jsonPut: Put[Json] =

@@ -4,7 +4,7 @@ import better.files.File
 import cats.data.NonEmptyList
 import cats.effect.IO
 import cats.implicits.toFlatMapOps
-import co.ledger.cal.model.token.Token
+import co.ledger.cal.model.Token
 import co.ledger.cal.parser.TokenJsonParser
 import co.ledger.cal.repository.Repository
 import co.ledger.cal.repository.TokenId

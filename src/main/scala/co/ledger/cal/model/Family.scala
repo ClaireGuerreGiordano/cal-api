@@ -1,4 +1,4 @@
-package co.ledger.cal.model.coin
+package co.ledger.cal.model
 
 import doobie.postgres.implicits.pgEnumStringOpt
 import doobie.util.meta.Meta

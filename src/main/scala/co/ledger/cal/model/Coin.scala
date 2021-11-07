@@ -1,8 +1,8 @@
-package co.ledger.cal.model.coin
+package co.ledger.cal.model
 
 import cats.data._
 import cats.implicits._
-import co.ledger.cal.model.coin.Type.Main
+import co.ledger.cal.model.Type.Main
 import io.circe.Codec
 import io.circe.generic.JsonCodec
 import io.circe.generic.semiauto.deriveCodec
@@ -13,7 +13,11 @@ import sttp.tapir.Schema
     name: String,
     symbol: String,
     family: Family,
-    attributes: CoinAttributes
+    coin_type: Int,
+    has_segwit: Boolean,
+    has_tokens: Boolean,
+    units: NonEmptyList[Unit],
+    networks: NonEmptyList[Network]
 )
 
 final case class Coin(
@@ -21,7 +25,11 @@ final case class Coin(
     name: String,
     symbol: String,
     family: Family,
-    attributes: CoinAttributes
+    coin_type: Int,
+    has_segwit: Boolean,
+    has_tokens: Boolean,
+    units: NonEmptyList[Unit],
+    networks: NonEmptyList[Network]
 )
 
 object Coin {
@@ -32,13 +40,11 @@ object Coin {
     "name",
     "symbol",
     Family.Bitcoin,
-    CoinAttributes(
-      0,
-      has_segwit = true,
-      has_tokens = false,
-      NonEmptyList.one(Unit("name", "code", 0L)),
-      NonEmptyList.one(Network(Type.Main, "blockchain_name"))
-    )
+    0,
+    has_segwit = true,
+    has_tokens = false,
+    NonEmptyList.one(Unit("name", "code", 0L)),
+    NonEmptyList.one(Network(Type.Main, "blockchain_name"))
   )
 }
 
@@ -60,21 +66,18 @@ trait CoinValidator {
     else networks.validNel
 
   def validateCoin(coin: NonValidatedCoin): ValidationResult[Coin] = {
-    (validateUnits(coin.attributes.units), validateNetwork(coin.attributes.networks)).mapN {
-      case (u, n) =>
-        Coin(
-          coin.ticker,
-          coin.name,
-          coin.symbol,
-          coin.family,
-          CoinAttributes(
-            coin.attributes.coin_type,
-            coin.attributes.has_segwit,
-            coin.attributes.has_tokens,
-            u,
-            n
-          )
-        )
+    (validateUnits(coin.units), validateNetwork(coin.networks)).mapN { case (u, n) =>
+      Coin(
+        coin.ticker,
+        coin.name,
+        coin.symbol,
+        coin.family,
+        coin.coin_type,
+        coin.has_segwit,
+        coin.has_tokens,
+        u,
+        n
+      )
     }
   }
 }

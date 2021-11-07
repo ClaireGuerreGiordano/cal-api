@@ -12,8 +12,10 @@ import co.ledger.cal.api.CALRoutes
 import co.ledger.cal.config.CALConfig
 import co.ledger.cal.repository.FlywayDatabaseMigrator
 import co.ledger.cal.repository.PostgresCoinRepository
+import co.ledger.cal.repository.PostgresDappRepository
 import co.ledger.cal.repository.PostgresTokenRepository
 import co.ledger.cal.service.CoinService
+import co.ledger.cal.service.DappService
 import co.ledger.cal.service.TokenService
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.StrictLogging
@@ -50,9 +52,11 @@ object CALServer extends IOApp.WithContext with StrictLogging {
       )
       coinRepo     = new PostgresCoinRepository(transactor)
       tokenRepo    = new PostgresTokenRepository(transactor)
+      dappRepo     = new PostgresDappRepository(transactor)
       coinService  = CoinService(coinRepo)
       tokenService = TokenService(tokenRepo)
-      calRoutes    = new CALRoutes(coinService, tokenService)
+      dappService  = DappService(dappRepo)
+      calRoutes    = new CALRoutes(coinService, tokenService, dappService)
       docs = OpenAPIDocsInterpreter().toOpenAPI(
         CALRoutes.endpoints,
         BuildInfo.name,

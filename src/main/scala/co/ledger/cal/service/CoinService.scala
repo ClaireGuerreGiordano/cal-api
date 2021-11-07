@@ -4,7 +4,7 @@ import better.files.File
 import cats.data.NonEmptyList
 import cats.effect.IO
 import cats.implicits.toFlatMapOps
-import co.ledger.cal.model.coin.Coin
+import co.ledger.cal.model.Coin
 import co.ledger.cal.parser.CoinJsonParser
 import co.ledger.cal.repository.CoinId
 import co.ledger.cal.repository.Repository
